@@ -10,18 +10,18 @@
   <div class="card">
     <div class="header">
       <div class="avatar">
-        <img src="https://muchfeed.com/wp-content/uploads/2019/12/Mark-Tuan-3.jpg" alt="">
-      </div>
+        <img src={{imgPreview}} (click)="getPicture('camera')" alt="">
+      </div> 
     </div>
   </div>
+  <input type="file" *ngIf="isDesktop" #filePicker (change)="OnFileChoose($event)"/>
+  
 
   <div class="card-body">
     <div class="user-meta ion-text-center" style="margin-bottom: 20px;">
       <h3 class="name">{{name}}</h3>
       <h5 class="email">{{email}}</h5>
     </div>
-  <!-- <ion-button expand="full" color="primary">Made By Yunika</ion-button>
-  <ion-button expand="full" color="secondary">@RogerFederer on Twitter</ion-button> -->
   <ion-button (click)="logout()" style="margin-top:50px;" expand="full" color="danger">Logout</ion-button>
 </div>
   
