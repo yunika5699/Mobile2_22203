@@ -2,8 +2,6 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NavController, Platform } from '@ionic/angular';
 import { ServicesService } from '../services.service';
-import { ImagePicker } from '@ionic-native/image-picker/ngx';
-import { Base64 } from '@ionic-native/base64/ngx';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Camera, CameraResultType, CameraSource, Capacitor} from '@capacitor/core';
 
@@ -26,8 +24,6 @@ export class Tab3Page implements OnInit{
   constructor(
     private platform : Platform,
     private sanitizer : DomSanitizer,
-    private base64: Base64,
-    private imagePicker: ImagePicker,
     private navCtrl : NavController,
     private service : ServicesService,
     private router : Router
@@ -46,9 +42,13 @@ export class Tab3Page implements OnInit{
         console.log("UserId:", this.email);
         this.getCurrUser(this.email);
         this.service.getProfilePic(this.email).subscribe((doc)=>{
+          console.log(doc.data());
           let pic : any = [];
           pic = doc.data();
-          if(doc.data()){
+          if(doc.data() === {}){
+            this.imgPreview = "https://muchfeed.com/wp-content/uploads/2019/12/Mark-Tuan-3.jpg";
+          }
+          else{
             this.imgPreview = "data:image/jpeg;base64,"+ pic.pic;
           }
         })
@@ -85,22 +85,6 @@ export class Tab3Page implements OnInit{
         console.log("Document doesn't exist");
       }
     });
-  }
-
-  getPhoto() {
-    let options = {
-      maximumImagesCount: 1
-    };
-    this.imagePicker.getPictures(options).then((results) => {
-      for (var i = 0; i < results.length; i++) {
-          this.imgPreview = results[i];
-          this.base64.encodeFile(results[i]).then((base64File: string) => {
-            this.avatar = base64File;
-          }, (err) => {
-            console.log(err);
-          });
-      }
-    }, (err) => { });
   }
 
   async getPicture(type : string){
