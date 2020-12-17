@@ -1,17 +1,28 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Tab 1
+      Friends List
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 1</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <app-explore-container name="Tab 1 page"></app-explore-container>
+  <ion-toolbar>
+    <ion-segment value="all">
+      <ion-segment-button (click)="showAllUser()" value="all">All</ion-segment-button>
+      <ion-segment-button (click)="showFriends()" value="favorites">Friends</ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+  
+  <ion-item *ngFor="let user of users; let i = index">
+    <ion-avatar slot="start">
+      <img src="https://i.pinimg.com/736x/94/56/f9/9456f9453355be5efb6be4c0cefa6230.jpg" />
+    </ion-avatar>
+    <ion-label>
+      <h2>{{user.firstName}} {{user.lastName}}</h2>
+      <p>{{user.email}}</p>
+    </ion-label>
+    <ion-button (click)="addFriend(user.email,i)">Add Friend</ion-button>
+  </ion-item>
+  
 </ion-content>
