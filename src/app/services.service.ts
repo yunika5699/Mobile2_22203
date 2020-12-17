@@ -127,6 +127,16 @@ export class ServicesService {
     });
   }
 
+  // delete temen
+  deleteFriends(doc_id,data){
+    this.fireStore.collection("ms_friend").doc(doc_id).get().subscribe((doc) => {
+      let fr: any = []
+      fr = doc.data();
+      fr.friends = fr.friends.filter(item => item != data)
+      this.fireStore.collection("ms_friend").doc(doc_id).set({friends : fr.friends})
+    })
+  }
+
   //tambahin temen untuk pertama kali (belum ada docs nya di firestore)
   addFirstFriend(doc_id,data){
     this.fireStore.collection("ms_friend").doc(doc_id).set({friends : [data]}).
