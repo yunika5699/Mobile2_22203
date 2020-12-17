@@ -151,23 +151,16 @@ export class Tab1Page implements OnInit{
     this.service.showFriends(this.uid).subscribe(async (doc) =>{
       let friend: any;
       friend = doc.data();
-      if(friend == undefined){
-        for await (let el of list) {
-          el.added = false;
-          this.addUserWithAdded(el);
-        }
-      }else{
-        for await (let el of list) {
-          for await (let fr of friend.friends){
-            if(el.email == fr){
-              el.added = true;
-              break;
-            }else{
-              el.added = false;
-            }
+      for await (let el of list) {
+        for await (let fr of friend.friends){
+          if(el.email == fr){
+            el.added = true;
+            break;
+          }else{
+            el.added = false;
           }
-          this.addUserWithAdded(el);
         }
+        this.addUserWithAdded(el);
       }
     });
   }
