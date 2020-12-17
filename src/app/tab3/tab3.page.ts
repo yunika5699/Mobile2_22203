@@ -1,10 +1,7 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NavController, Platform } from '@ionic/angular';
+import { NavController } from '@ionic/angular';
 import { ServicesService } from '../services.service';
-import { DomSanitizer } from '@angular/platform-browser';
-import { Camera, CameraResultType, CameraSource, Capacitor} from '@capacitor/core';
-
 
 
 @Component({
@@ -13,52 +10,27 @@ import { Camera, CameraResultType, CameraSource, Capacitor} from '@capacitor/cor
   styleUrls: ['tab3.page.scss']
 })
 export class Tab3Page implements OnInit{
-  @ViewChild('filePicker', {static:false})
-  filePickerRef : ElementRef<HTMLInputElement>;
-  isDesktop : boolean;
   name = "";
   email = "";
-  imgPreview = "https://muchfeed.com/wp-content/uploads/2019/12/Mark-Tuan-3.jpg";
-  avatar; 
 
   constructor(
-    private platform : Platform,
-    private sanitizer : DomSanitizer,
     private navCtrl : NavController,
     private service : ServicesService,
     private router : Router
   ) {}
 
   ngOnInit(){
-    if((this.platform.is('mobile') && this.platform.is("hybrid")) ||
-    this.platform.is('desktop')){
-      this.isDesktop = true;
-    }
-
     this.service.userDetail().subscribe(res => {
       if (res !== null){
         console.log("CurrentUser:" , res.email);
         this.email = res.email;
         console.log("UserId:", this.email);
         this.getCurrUser(this.email);
-        this.service.getProfilePic(this.email).subscribe((doc)=>{
-          console.log(doc.data());
-          let pic : any = [];
-          pic = doc.data();
-          if(doc.data() === {}){
-            this.imgPreview = "https://muchfeed.com/wp-content/uploads/2019/12/Mark-Tuan-3.jpg";
-          }
-          else{
-            this.imgPreview = "data:image/jpeg;base64,"+ pic.pic;
-          }
-        })
       }
       else{
         this.navCtrl.navigateBack('/register');
       }
     })
-
-    
   }
 
   logout(){
@@ -85,29 +57,6 @@ export class Tab3Page implements OnInit{
         console.log("Document doesn't exist");
       }
     });
-  }
-
-  async getPicture(type : string){
-    if(!Capacitor.isPluginAvailable('Camera') || (this.isDesktop && type === 'gallery')){
-      this.filePickerRef.nativeElement.click();
-      return;
-    }
-
-    const image = await Camera.getPhoto({
-      quality : 100,
-      width : 160,
-      height : 160,
-      allowEditing : false,
-      resultType : CameraResultType.Base64,
-      source : CameraSource.Prompt
-    });
-
-    console.log(image.base64String);
-
-    this.service.uploadPic(this.email,image.base64String);
-    this.imgPreview = "data:image/jpeg;base64,"+image.base64String;
-
-
   }
 
 

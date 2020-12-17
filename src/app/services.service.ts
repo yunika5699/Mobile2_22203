@@ -168,19 +168,4 @@ export class ServicesService {
     })
   }
 
-  uploadPic(doc_id,base64){
-    this.fireStore.collection("ms_photo").doc(doc_id).set({pic : base64}).then(
-      function(){
-        console.log("Profile Pic Uploaded!");
-      }
-    )
-    .catch(function(error) {
-      console.error("Error writing document: ", error);
-    });
-  }
-
-  getProfilePic(doc_id){
-    return this.fireStore.collection("ms_photo").doc(doc_id).get();
-  }
-
 }
