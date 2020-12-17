@@ -14,7 +14,6 @@ export class Tab1Page implements OnInit{
   test : any [];
   users : any = [];
   friends : any = [];
-  friendlist : boolean = false;
 
   constructor(
     private toastController : ToastController,
@@ -29,7 +28,9 @@ export class Tab1Page implements OnInit{
   ngOnInit(){
     this.service.userDetail().subscribe(res => {
       if (res !== null){
+        console.log("CurrentUser:" , res.email);
         this.uid = res.email;
+        console.log("UserId:", this.uid);
       }
       else{
         this.navCtrl.navigateBack('/register');
@@ -42,13 +43,12 @@ export class Tab1Page implements OnInit{
   }
 
   showAllUser(){
-    this.friendlist = false;
     this.users = [];
     this.service.getUser().subscribe((snapshot)=>{
       snapshot.docs.forEach(doc => {
+        console.log(doc.data());
         this.addUser(doc.data());
       })
-      this.addLabelAdded(this.users)
     });
   }
 
@@ -62,27 +62,16 @@ export class Tab1Page implements OnInit{
     }
   }
 
-  addUserWithAdded(user : any){
-    if(user.email !== this.uid){
-      this.users.push({
-        firstName : user.firstName,
-        lastName : user.lastName,
-        email : user.email,
-        added : user.added,
-      })
-    }
-  }
-
-  addFriend(data,i, event: any){
+  addFriend(data,i){
+    console.log(i);
     this.service.showFriends(this.uid).subscribe((doc) =>{
       if(doc.data()){
         this.friends = doc.data();
         this.index = this.friends.friends.length;
-        this.addToDb(data,event);
+        this.addToDb(data);
       }
       else if(!doc.data())
       {
-        event.target.classList.add('hide'); // To ADD
         this.friends= data;
         this.service.addFirstFriend(this.uid,this.friends);
         this.service.addBack(data,this.uid);
@@ -91,11 +80,13 @@ export class Tab1Page implements OnInit{
     });
   }
 
-  addToDb(data,event: any){
+  addToDb(data){
+    console.log(this.friends);
     let bool = [];
     let check = 0;
     //looping buat lihat dulu dia sudah jadi teman atau belum
     for(let i=0; i<this.index;i++){
+      console.log(this.friends.friends[i]);
       if(this.friends.friends[i] === data){
         bool[i] = 1;
       }
@@ -110,8 +101,6 @@ export class Tab1Page implements OnInit{
 
     //kalau check === 0 berarti dia belum jadi temen
     if(check === 0){
-      this.showAllUser();
-      event.target.classList.add('hide'); // To ADD
       this.friends.friends[this.index] = data;
       this.service.addFriends(this.uid,this.friends);
       this.service.addBack(data, this.uid);
@@ -120,6 +109,7 @@ export class Tab1Page implements OnInit{
     else if(check === 1){
       this.presentToast('Warning!','This friend has been on your list','danger');
     }
+    console.log(check);
   }
 
   async presentToast(header:any, message : any, color:any) {
@@ -133,35 +123,14 @@ export class Tab1Page implements OnInit{
     toast.present();
   }
 
-  removeFriend(data,i,event){
-    this.users[i].added = false
-    this.service.deleteFriends(this.uid,data);
-    this.presentToast('Success!','Friend has been deleted','primary');
-  }
-
   showFriends(){
-    this.friendlist = true;
+    this.users=[];
     this.service.showFriends(this.uid).subscribe((doc) =>{
       console.log(doc.data());
     });
   }
 
-  async addLabelAdded(list: any) {
-    this.users=[];
-    this.service.showFriends(this.uid).subscribe(async (doc) =>{
-      let friend: any;
-      friend = doc.data();
-      for await (let el of list) {
-        for await (let fr of friend.friends){
-          if(el.email == fr){
-            el.added = true;
-            break;
-          }else{
-            el.added = false;
-          }
-        }
-        this.addUserWithAdded(el);
-      }
-    });
-  }
+
+  
+
 }

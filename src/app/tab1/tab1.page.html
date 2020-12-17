@@ -14,7 +14,7 @@
     </ion-segment>
   </ion-toolbar>
   
-  <ion-item *ngFor="let user of users; let i = index" [ngClass]="friendlist && !user.added ? 'hide' : ''">
+  <ion-item *ngFor="let user of users; let i = index">
     <ion-avatar slot="start">
       <img src="https://i.pinimg.com/736x/94/56/f9/9456f9453355be5efb6be4c0cefa6230.jpg" />
     </ion-avatar>
@@ -22,8 +22,7 @@
       <h2>{{user.firstName}} {{user.lastName}}</h2>
       <p>{{user.email}}</p>
     </ion-label>
-    <ion-button (click)="addFriend(user.email,i,$event)" [ngClass]="user.added ? 'hide' : ''" class='btnAdd-{{i}}'>Add Friend</ion-button>
-    <ion-button color="danger" (click)="removeFriend(user.email,i,$event)" [ngClass]="friendlist && user.added ? '' : 'hide'" class='btnRemove-{{i}}'>Remove Friend</ion-button>
+    <ion-button (click)="addFriend(user.email,i)">Add Friend</ion-button>
   </ion-item>
-
+  
 </ion-content>
