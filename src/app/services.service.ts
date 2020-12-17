@@ -20,6 +20,7 @@ export class ServicesService {
     private fireAuth : AngularFireAuth,
   ) { }
 
+  //register user baru (firebase auth)
   register(newUser){
     return new Promise<any>((resolve,reject)=> {
       this.fireAuth.createUserWithEmailAndPassword(newUser.email, newUser.password)
@@ -30,6 +31,7 @@ export class ServicesService {
     });
   }
 
+  //ini selesai registrasi berhasil, masukin user ke ms_user
   addUser(newUser){
     const user = {
       firstName : newUser.firstName,
@@ -47,6 +49,7 @@ export class ServicesService {
     });
   }
   
+  //login (firebase auth)
   login(user){
     return new Promise<any>((resolve,reject)=> {
       this.fireAuth.signInWithEmailAndPassword(user.email, user.password)
@@ -57,6 +60,7 @@ export class ServicesService {
     });
   }
 
+  //logout (firebase auth)
   logout(){
     return new Promise((resolve,reject)=>{
       if(this.fireAuth.currentUser){
@@ -71,10 +75,12 @@ export class ServicesService {
     });
   }
 
+  //ini buat cek ada user yang login atau tidak
   userDetail(){
     return this.fireAuth.user;
   }
 
+  //masukin data latitude longitude ke ms_loc
   checkIn(doc_id, data){
     console.log(data);
     this.fireStore.collection("ms_loc").doc(doc_id).set(data)
@@ -86,6 +92,7 @@ export class ServicesService {
     });
   }
 
+  //tampilin semua pengguna 
   showUsers(){
     this.fireStore.collection("ms_user").get().subscribe((snapshot)=>{
         snapshot.docs.forEach(doc => {
@@ -94,9 +101,11 @@ export class ServicesService {
     });
   }
 
+  //tampilin yang jadi temen doang
   showFriends(doc_id){
     return this.fireStore.collection("ms_friend").doc(doc_id).get();
   }
+
 
   getUser(){
     return this.fireStore.collection("ms_user").get();
@@ -107,6 +116,7 @@ export class ServicesService {
     return this.fireStore.collection("ms_user").doc(doc_id).get();
   }
 
+  //tambahin temen
   addFriends(doc_id,data){ 
     this.fireStore.collection("ms_friend").doc(doc_id).set(Object.assign({}, data))
     .then(function() {
@@ -117,6 +127,7 @@ export class ServicesService {
     });
   }
 
+  //tambahin temen untuk pertama kali (belum ada docs nya di firestore)
   addFirstFriend(doc_id,data){
     this.fireStore.collection("ms_friend").doc(doc_id).set({friends : [data]}).
     then(function(){
@@ -124,14 +135,17 @@ export class ServicesService {
     });
   }
 
+  //misal A add B jadi temen, A juga masuk jadi temennya B
   addBack(doc_id, data){
     let listOfFriends : any = [];
     this.fireStore.collection("ms_friend").doc(doc_id).get().subscribe((doc) =>{
       console.log(doc.data());
       listOfFriends = doc.data();
+      //kalo B belum punya temen, A jadi temen pertama, jadi ke function addFirstFriend
       if(!listOfFriends || !doc.data()){
         this.addFirstFriend(doc_id,data);
       }
+      //kalo B uda ada temen, ambil list temen B, terus masukin A ke list temen B
       else {
         let index = listOfFriends.friends.length;
         listOfFriends.friends[index] = data;

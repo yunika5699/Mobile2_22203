@@ -84,6 +84,7 @@ export class Tab1Page implements OnInit{
     console.log(this.friends);
     let bool = [];
     let check = 0;
+    //looping buat lihat dulu dia sudah jadi teman atau belum
     for(let i=0; i<this.index;i++){
       console.log(this.friends.friends[i]);
       if(this.friends.friends[i] === data){
@@ -98,6 +99,7 @@ export class Tab1Page implements OnInit{
       check+=bool[i];
     }
 
+    //kalau check === 0 berarti dia belum jadi temen
     if(check === 0){
       this.friends.friends[this.index] = data;
       this.service.addFriends(this.uid,this.friends);
